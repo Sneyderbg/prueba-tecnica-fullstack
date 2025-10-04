@@ -27,7 +27,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
-interface Transaction {
+export interface Transaction {
   id: string;
   concepto: string;
   monto: number;
@@ -66,15 +66,20 @@ function Transactions(): JSX.Element {
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error('Failed to create transaction');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create transaction');
       }
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
     },
+    onError: (error: unknown) => {
+      setErrorMessage((error as Error).message || 'Error');
+    },
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { data: session } = authClient.useSession();
   const userRole = (session?.user as { role?: string })?.role || 'user';
   const isAdmin = userRole === 'admin';
@@ -99,10 +104,12 @@ function Transactions(): JSX.Element {
     transactions?.reduce((sum, transaction) => sum + transaction.monto, 0) || 0;
 
   function onSubmit(data: TransactionFormData) {
+    setErrorMessage(null);
     createTransactionMutation.mutate(data, {
       onSuccess: () => {
         reset();
         setIsDialogOpen(false);
+        setErrorMessage(null);
       },
     });
   }
@@ -164,6 +171,12 @@ function Transactions(): JSX.Element {
                       )}
                     </div>
 
+                    {errorMessage && (
+                      <p className='text-sm text-red-600 mt-1'>
+                        {errorMessage}
+                      </p>
+                    )}
+
                     <Button
                       type='submit'
                       className='w-full'
@@ -208,7 +221,8 @@ function Transactions(): JSX.Element {
                         <TableCell>{transaction.concepto}</TableCell>
                         <TableCell className='whitespace-break-spaces'>
                           <span
-                            className={"whitespace-break-spaces " +
+                            className={
+                              'whitespace-break-spaces ' +
                               (transaction.monto >= 0
                                 ? 'text-green-600 font-semibold'
                                 : 'text-red-600 font-semibold')
@@ -233,12 +247,14 @@ function Transactions(): JSX.Element {
             <div className='mt-4 pt-4 border-t'>
               <div className='flex justify-between items-center'>
                 <span className='font-semibold'>Total:</span>
-                <span className=
-                  {"whitespace-break-spaces font-bold text-lg " +
+                <span
+                  className={
+                    'whitespace-break-spaces font-bold text-lg ' +
                     (totalAmount >= 0
                       ? 'text-green-600 font-semibold'
                       : 'text-red-600 font-semibold')
-                  } >
+                  }
+                >
                   {totalAmount < 0 ? '-' : ''}$
                   {Math.abs(totalAmount).toFixed(2)}
                 </span>

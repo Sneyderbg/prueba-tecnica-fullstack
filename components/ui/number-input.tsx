@@ -16,6 +16,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   (
     {
       className,
+      id,
       value,
       onChange,
       min,
@@ -31,6 +32,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       <NumericFormat
         customInput={Input}
         getInputRef={ref}
+        id={id}
         className={cn(
           'text-right',
           // Hide number input spinner buttons

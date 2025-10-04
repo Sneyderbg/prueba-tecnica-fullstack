@@ -28,7 +28,7 @@
     "react/hook-use-state": "error",
     "react/function-component-definition": [
       1,
-      { "namedComponents": "function-declaration" }
+      { "namedComponents": ["arrow-function", "function-declaration"] }
     ],
     "react/jsx-key": "error",
     "react/no-array-index-key": "error",
@@ -45,7 +45,7 @@
     "eqeqeq": "error",
     "prefer-arrow-callback": "error",
     "arrow-body-style": ["warn", "as-needed"],
-    "func-style": ["error", "declaration"]
+    "func-style": "off"
   },
   "overrides": [
     {
