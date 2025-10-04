@@ -29,5 +29,23 @@ export const signupSchema = z
     path: ['confirmPassword'],
   });
 
+export const transactionSchema = z.object({
+  concepto: z
+    .string()
+    .min(1, 'El concepto es requerido')
+    .min(3, 'El concepto debe tener al menos 3 caracteres')
+    .max(100, 'El concepto no puede tener más de 100 caracteres'),
+  monto: z.number().refine((val) => val !== 0, {
+    message: 'El monto no puede ser cero',
+  }),
+  fecha: z
+    .string()
+    .min(1, 'La fecha es requerida')
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: 'La fecha debe ser válida',
+    }),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
+export type TransactionFormData = z.infer<typeof transactionSchema>;

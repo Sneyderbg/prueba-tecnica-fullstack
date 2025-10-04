@@ -3,9 +3,12 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { authClient } from '@/lib/auth/client';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // Pages that don't require authentication
 const publicPages = ['/login', '/signup'];
+
+const queryClient = new QueryClient();
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -24,7 +27,11 @@ function App({ Component, pageProps }: AppProps) {
 
   // Don't show loading screen - let pages handle their own loading states
 
-  return <Component {...pageProps} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Component {...pageProps} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;
