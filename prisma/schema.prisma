@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -19,6 +20,7 @@ model User {
   email         String
   emailVerified Boolean
   image         String?
+  role          String    @default("admin")
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
