@@ -46,6 +46,15 @@ export const transactionSchema = z.object({
     }),
 });
 
+export const userUpdateSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'El nombre es requerido')
+    .min(2, 'El nombre debe tener al menos 2 caracteres'),
+  role: z.enum(['admin', 'user']),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type TransactionFormData = z.infer<typeof transactionSchema>;
+export type UserUpdateFormData = z.infer<typeof userUpdateSchema>;
