@@ -14,7 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { authClient } from '@/lib/auth/client';
-import { User, Mail, MapPin, LogOut, Save } from 'lucide-react';
+import { useQuery } from 'react-query';
+import { User, Mail, MapPin, LogOut, Save, DollarSign } from 'lucide-react';
 
 // eslint-disable-next-line complexity
 function Profile() {
@@ -22,6 +23,26 @@ function Profile() {
   const { data: session } = authClient.useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Fetch transactions
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const response = await fetch('/api/transactions');
+      if (!response.ok) {
+        throw new Error('Failed to fetch transactions');
+      }
+      return response.json() as Promise<any[]>;
+    },
+    enabled: !!session,
+  });
+
+  // Filter user's transactions
+  const userTransactions = transactions.filter(
+    (t) => t.userId === session?.user?.id
+  );
+  const transactionCount = userTransactions.length;
+  const totalAmount = userTransactions.reduce((sum, t) => sum + t.monto, 0);
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -130,23 +151,6 @@ function Profile() {
                     disabled={!isEditing}
                   />
                 </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='phone'>Teléfono</Label>
-                  <Input
-                    id='phone'
-                    type='tel'
-                    placeholder='+1234567890'
-                    disabled={!isEditing}
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='location'>Ubicación</Label>
-                  <Input
-                    id='location'
-                    placeholder='Ciudad, País'
-                    disabled={!isEditing}
-                  />
-                </div>
               </div>
 
               <div className='flex space-x-4'>
@@ -181,9 +185,11 @@ function Profile() {
               <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                   <User className='mr-2 h-4 w-4 text-gray-500' />
-                  <span className='text-sm'>Miembro desde</span>
+                  <span className='text-sm'>Estado</span>
                 </div>
-                <span className='text-sm font-medium'>Enero 2024</span>
+                <Badge variant='secondary' className='text-xs'>
+                  Activo
+                </Badge>
               </div>
 
               <div className='flex items-center justify-between'>
@@ -191,15 +197,20 @@ function Profile() {
                   <Mail className='mr-2 h-4 w-4 text-gray-500' />
                   <span className='text-sm'>Transacciones</span>
                 </div>
-                <span className='text-sm font-medium'>127</span>
+                <span className='text-sm font-medium'>{transactionCount}</span>
               </div>
 
               <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
-                  <MapPin className='mr-2 h-4 w-4 text-gray-500' />
-                  <span className='text-sm'>Reportes</span>
+                  <DollarSign className='mr-2 h-4 w-4 text-gray-500' />
+                  <span className='text-sm'>Monto Total</span>
                 </div>
-                <span className='text-sm font-medium'>23</span>
+                <span
+                  className={`text-sm font-medium ${totalAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {totalAmount < 0 ? '-' : ''}$
+                  {Math.abs(totalAmount).toFixed(2)}
+                </span>
               </div>
             </CardContent>
           </Card>

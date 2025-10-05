@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DollarSign, Users, FileText, ArrowRight } from 'lucide-react';
+import { authClient } from '@/lib/auth/client';
 
 const modules = [
   {
@@ -18,6 +19,7 @@ const modules = [
     icon: DollarSign,
     color: 'text-green-600',
     bgColor: 'bg-green-50',
+    adminOnly: false,
   },
   {
     title: 'Usuarios',
@@ -26,6 +28,7 @@ const modules = [
     icon: Users,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
+    adminOnly: true,
   },
   {
     title: 'Reportes',
@@ -34,10 +37,18 @@ const modules = [
     icon: FileText,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
+    adminOnly: true,
   },
 ];
 
 function Home() {
+  const { data: session } = authClient.useSession();
+  const isAdmin = (session?.user as any)?.role === 'admin';
+
+  const visibleModules = modules.filter(
+    (module) => !module.adminOnly || isAdmin
+  );
+
   return (
     <AppLayout>
       <div className='space-y-6'>
@@ -48,8 +59,10 @@ function Home() {
           </p>
         </div>
 
-        <div className='grid grid-cols-3 gap-6'>
-          {modules.map((module) => (
+        <div
+          className={`grid gap-6 ${visibleModules.length === 1 ? 'grid-cols-1 max-w-md' : 'grid-cols-3'}`}
+        >
+          {visibleModules.map((module) => (
             <Link key={module.title} href={module.href}>
               <Card className='cursor-pointer hover:shadow-lg transition-shadow duration-200'>
                 <CardHeader>

@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { PrismaClient } from '@prisma/client';
+import { hash, compare } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,17 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    password: {
+      hash: async (password: string) => {
+        return await hash(password, 12);
+      },
+      verify: async ({ password, hash }) => {
+        if (!hash) {
+          return false;
+        }
+        return await compare(password, hash);
+      },
+    },
   },
   socialProviders: {
     github: {
@@ -24,6 +36,11 @@ export const auth = betterAuth({
         required: false,
         defaultValue: 'admin',
       },
+    },
+  },
+  account: {
+    accountLinking: {
+      enabled: true,
     },
   },
 });

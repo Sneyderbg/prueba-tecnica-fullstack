@@ -121,7 +121,7 @@ function Transactions(): JSX.Element {
           <h1 className='text-2xl font-bold underline'>Ingresos y Egresos</h1>
         </div>
 
-        <Card>
+        <Card className='h-[calc(100vh-200px)] flex flex-col'>
           <CardHeader className='flex flex-row items-center justify-end'>
             {isAdmin && (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -191,8 +191,8 @@ function Transactions(): JSX.Element {
               </Dialog>
             )}
           </CardHeader>
-          <CardContent>
-            <div className='max-h-96 overflow-y-auto'>
+          <CardContent className='flex flex-col h-full'>
+            <div className='flex-1 overflow-y-auto'>
               <Table>
                 <TableHeader>
                   <TableRow>
