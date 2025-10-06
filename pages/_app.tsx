@@ -6,7 +6,7 @@ import { authClient } from '@/lib/auth/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 // Pages that don't require authentication
-const publicPages = ['/login', '/signup'];
+const publicPages = ['/login', '/signup', '/docs'];
 
 const queryClient = new QueryClient();
 

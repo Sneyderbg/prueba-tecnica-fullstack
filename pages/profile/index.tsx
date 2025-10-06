@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AppLayout } from '@/components/layout/app-layout';
 import {
@@ -14,35 +14,69 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { authClient } from '@/lib/auth/client';
-import { useQuery } from 'react-query';
-import { User, Mail, MapPin, LogOut, Save, DollarSign } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { User, Mail, LogOut, Save, DollarSign } from 'lucide-react';
 
 // eslint-disable-next-line complexity
 function Profile() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session } = authClient.useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Fetch transactions
-  const { data: transactions = [] } = useQuery({
-    queryKey: ['transactions'],
+  // Update state when session loads
+  useEffect(() => {
+    if (session?.user) {
+      setName(session.user.name || '');
+      setEmail(session.user.email || '');
+    }
+  }, [session]);
+
+  // Fetch user profile with statistics
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
     queryFn: async () => {
-      const response = await fetch('/api/transactions');
+      const response = await fetch('/api/profile');
       if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
+        throw new Error('Failed to fetch profile');
       }
-      return response.json() as Promise<any[]>;
+      return response.json();
     },
     enabled: !!session,
   });
 
-  // Filter user's transactions
-  const userTransactions = transactions.filter(
-    (t) => t.userId === session?.user?.id
-  );
-  const transactionCount = userTransactions.length;
-  const totalAmount = userTransactions.reduce((sum, t) => sum + t.monto, 0);
+  const transactionCount = profile?.statistics?.transactionCount || 0;
+  const totalAmount = profile?.statistics?.totalAmount || 0;
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: { name: string; email: string }) => {
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      // Refresh session to get updated user data
+      window.location.reload();
+    },
+    onError: (error: unknown) => {
+      setErrorMessage((error as Error).message || 'Error updating profile');
+    },
+  });
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -57,8 +91,23 @@ function Profile() {
   }
 
   function handleSave() {
-    // Implement save functionality
+    setErrorMessage(null);
+    updateProfileMutation.mutate(
+      { name, email },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+          setErrorMessage(null);
+        },
+      }
+    );
+  }
+
+  function handleCancel() {
+    setName(session?.user?.name || '');
+    setEmail(session?.user?.email || '');
     setIsEditing(false);
+    setErrorMessage(null);
   }
 
   if (!session) {
@@ -138,7 +187,8 @@ function Profile() {
                   <Label htmlFor='name'>Nombre Completo</Label>
                   <Input
                     id='name'
-                    defaultValue={session.user?.name || ''}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     disabled={!isEditing}
                   />
                 </div>
@@ -147,7 +197,8 @@ function Profile() {
                   <Input
                     id='email'
                     type='email'
-                    defaultValue={session.user?.email || ''}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     disabled={!isEditing}
                   />
                 </div>
@@ -156,14 +207,23 @@ function Profile() {
               <div className='flex space-x-4'>
                 {isEditing ? (
                   <>
-                    <Button onClick={handleSave}>
-                      <Save className='mr-2 h-4 w-4' />
-                      Guardar Cambios
-                    </Button>
                     <Button
-                      variant='outline'
-                      onClick={() => setIsEditing(false)}
+                      onClick={handleSave}
+                      disabled={updateProfileMutation.isLoading}
                     >
+                      {updateProfileMutation.isLoading ? (
+                        <>
+                          <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <Save className='mr-2 h-4 w-4' />
+                          Guardar Cambios
+                        </>
+                      )}
+                    </Button>
+                    <Button variant='outline' onClick={handleCancel}>
                       Cancelar
                     </Button>
                   </>
@@ -173,6 +233,10 @@ function Profile() {
                   </Button>
                 )}
               </div>
+
+              {errorMessage && (
+                <p className='text-sm text-red-600 mt-2'>{errorMessage}</p>
+              )}
             </CardContent>
           </Card>
 

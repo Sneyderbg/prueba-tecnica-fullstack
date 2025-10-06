@@ -4,6 +4,69 @@ import { auth, Session } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /api/transactions:
+ *   get:
+ *     summary: Get all transactions
+ *     description: Retrieve a list of all transaction records
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Transaction'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ *   post:
+ *     summary: Create a new transaction
+ *     description: Create a new transaction record (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - concepto
+ *               - monto
+ *               - fecha
+ *             properties:
+ *               concepto:
+ *                 type: string
+ *                 description: Transaction concept
+ *               monto:
+ *                 type: number
+ *                 description: Transaction amount
+ *               fecha:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Transaction date
+ *     responses:
+ *       201:
+ *         description: Transaction created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Transaction'
+ *       400:
+ *         description: Missing required fields
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

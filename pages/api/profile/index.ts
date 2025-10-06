@@ -6,30 +6,38 @@ const prisma = new PrismaClient();
 
 /**
  * @swagger
- * /api/users:
+ * /api/profile:
  *   get:
- *     summary: Get all users
- *     description: Retrieve a list of all users (admin only)
+ *     summary: Get current user profile
+ *     description: Retrieve the current user's profile information
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of users
+ *         description: User profile with statistics
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
+ *               allOf:
+ *                 - $ref: '#/components/schemas/User'
+ *                 - type: object
+ *                   properties:
+ *                     statistics:
+ *                       type: object
+ *                       properties:
+ *                         transactionCount:
+ *                           type: integer
+ *                           description: Number of transactions
+ *                         totalAmount:
+ *                           type: number
+ *                           description: Total amount of transactions
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden - Admin access required
  *       500:
  *         description: Internal server error
  *   put:
- *     summary: Update a user
- *     description: Update user information (admin only)
+ *     summary: Update current user profile
+ *     description: Update the current user's profile information
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -39,23 +47,19 @@ const prisma = new PrismaClient();
  *           schema:
  *             type: object
  *             required:
- *               - id
  *               - name
- *               - role
+ *               - email
  *             properties:
- *               id:
- *                 type: string
- *                 description: User ID
  *               name:
  *                 type: string
  *                 description: User name
- *               role:
+ *               email:
  *                 type: string
- *                 enum: [user, admin]
- *                 description: User role
+ *                 format: email
+ *                 description: User email
  *     responses:
  *       200:
- *         description: User updated
+ *         description: Profile updated
  *         content:
  *           application/json:
  *             schema:
@@ -64,8 +68,6 @@ const prisma = new PrismaClient();
  *         description: Missing required fields
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden - Admin access required
  *       500:
  *         description: Internal server error
  */
@@ -90,37 +92,51 @@ export default async function handler(
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    if (session.user.role !== 'admin') {
-      return res
-        .status(403)
-        .json({ message: 'Forbidden: Admin access required' });
-    }
-
     if (req.method === 'GET') {
-      // Get all users
-      const users = await prisma.user.findMany({
+      // Get current user profile
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
         select: {
           id: true,
           name: true,
           email: true,
           role: true,
         },
-        orderBy: {
-          name: 'asc',
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get user's transactions for statistics
+      const transactions = await prisma.transactionRecord.findMany({
+        where: { userId: session.user.id },
+        select: {
+          monto: true,
         },
       });
 
-      res.status(200).json(users);
-    } else if (req.method === 'PUT') {
-      const { id, name, role } = req.body;
+      const transactionCount = transactions.length;
+      const totalAmount = transactions.reduce((sum, t) => sum + t.monto, 0);
 
-      if (!id || !name || !role) {
+      res.status(200).json({
+        ...user,
+        statistics: {
+          transactionCount,
+          totalAmount,
+        },
+      });
+    } else if (req.method === 'PUT') {
+      const { name, email } = req.body;
+
+      if (!name || !email) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
 
+      // Update current user
       const updatedUser = await prisma.user.update({
-        where: { id },
-        data: { name, role },
+        where: { id: session.user.id },
+        data: { name, email },
         select: {
           id: true,
           name: true,
@@ -133,7 +149,8 @@ export default async function handler(
     } else {
       res.status(405).json({ message: 'Method not allowed' });
     }
-  } catch {
+  } catch (error) {
+    console.error('Profile API error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

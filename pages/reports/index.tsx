@@ -210,58 +210,70 @@ function Reports() {
           </CardContent>
         </Card>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <div>
-            <Label className='block text-sm font-medium mb-2'>
-              Fecha Inicio
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant='outline'
-                  className='w-full justify-start text-left font-normal'
-                >
-                  <CalendarIcon className='mr-2 h-4 w-4' />
-                  {startDate
-                    ? format(startDate, 'PPP', { locale: es })
-                    : 'Seleccionar fecha'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className='w-auto p-0'>
-                <Calendar
-                  mode='single'
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div>
-            <Label className='block text-sm font-medium mb-2'>Fecha Fin</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant='outline'
-                  className='w-full justify-start text-left font-normal'
-                >
-                  <CalendarIcon className='mr-2 h-4 w-4' />
-                  {endDate
-                    ? format(endDate, 'PPP', { locale: es })
-                    : 'Seleccionar fecha'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className='w-auto p-0'>
-                <Calendar
-                  mode='single'
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <CalendarIcon className='h-5 w-5' />
+              Rango de Fechas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='flex flex-col sm:flex-row gap-4'>
+              <div>
+                <Label className='block text-sm font-medium mb-2'>
+                  Fecha Inicio
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className='justify-start text-left font-normal h-10 min-w-[200px]'
+                    >
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {startDate
+                        ? format(startDate, 'PPP', { locale: es })
+                        : 'Seleccionar fecha'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0'>
+                    <Calendar
+                      mode='single'
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div>
+                <Label className='block text-sm font-medium mb-2'>
+                  Fecha Fin
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className='justify-start text-left font-normal h-10 min-w-[200px]'
+                    >
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {endDate
+                        ? format(endDate, 'PPP', { locale: es })
+                        : 'Seleccionar fecha'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0'>
+                    <Calendar
+                      mode='single'
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           <Card>
