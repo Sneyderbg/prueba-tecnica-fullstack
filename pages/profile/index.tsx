@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { authClient } from '@/lib/auth/client';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { User, Mail, LogOut, Save, DollarSign } from 'lucide-react';
+import { z } from 'zod';
+import { profileUpdateSchema } from '@/lib/schemas';
 
 // eslint-disable-next-line complexity
 function Profile() {
@@ -90,16 +92,15 @@ function Profile() {
     }
   }
 
-  function validateEmail(email: string) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
   function handleSave() {
     setErrorMessage(null);
 
-    if (!validateEmail(email)) {
-      setErrorMessage('Por favor, ingresa un correo electrónico válido');
+    try {
+      profileUpdateSchema.parse({ name, email });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setErrorMessage(error.issues[0].message);
+      }
       return;
     }
 
