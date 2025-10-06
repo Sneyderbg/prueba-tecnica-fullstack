@@ -37,7 +37,7 @@
             },
             "role": {
               "type": "string",
-              "enum": ["usuario", "administrador"],
+              "enum": ["user", "admin"],
               "description": "User role"
             }
           }

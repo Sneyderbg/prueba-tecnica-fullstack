@@ -11,26 +11,26 @@ const navigation = [
     name: 'Dashboard',
     href: '/',
     icon: Home,
-    roles: ['usuario', 'administrador'],
+    roles: ['user', 'admin'],
   },
   {
     name: 'Ingresos y Egresos',
     href: '/transactions',
     icon: DollarSign,
-    roles: ['usuario', 'administrador'],
+    roles: ['user', 'admin'],
   },
-  { name: 'Usuarios', href: '/users', icon: Users, roles: ['administrador'] },
+  { name: 'Usuarios', href: '/users', icon: Users, roles: ['admin'] },
   {
     name: 'Reportes',
     href: '/reports',
     icon: FileText,
-    roles: ['administrador'],
+    roles: ['admin'],
   },
   {
     name: 'Perfil',
     href: '/profile',
     icon: User,
-    roles: ['usuario', 'administrador'],
+    roles: ['user', 'admin'],
   },
 ];
 

@@ -42,7 +42,7 @@ function Profile() {
     queryFn: async () => {
       const response = await fetch('/api/profile');
       if (!response.ok) {
-        throw new Error('Failed to fetch profile');
+        throw new Error('Error al obtener perfil');
       }
       return response.json();
     },
@@ -64,7 +64,7 @@ function Profile() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update profile');
+        throw new Error(errorData.message || 'Error al actualizar perfil');
       }
       return response.json();
     },
@@ -74,7 +74,7 @@ function Profile() {
       window.location.reload();
     },
     onError: (error: unknown) => {
-      setErrorMessage((error as Error).message || 'Error updating profile');
+      setErrorMessage((error as Error).message || 'Error al actualizar perfil');
     },
   });
 

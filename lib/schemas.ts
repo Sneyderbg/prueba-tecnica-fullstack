@@ -51,7 +51,7 @@ export const userUpdateSchema = z.object({
     .string()
     .min(1, 'El nombre es requerido')
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
-  role: z.enum(['administrador', 'usuario']),
+  role: z.enum(['admin', 'user']),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

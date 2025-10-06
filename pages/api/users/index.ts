@@ -8,13 +8,13 @@ const prisma = new PrismaClient();
  * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
- *     description: Retrieve a list of all users (admin only)
+ *     summary: Obtener todos los usuarios
+ *     description: Recuperar una lista de todos los usuarios (solo administrador)
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of users
+ *         description: Lista de usuarios
  *         content:
  *           application/json:
  *             schema:
@@ -22,14 +22,14 @@ const prisma = new PrismaClient();
  *               items:
  *                 $ref: '#/components/schemas/User'
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       403:
- *         description: Forbidden - Admin access required
+ *         description: Prohibido - Se requiere acceso de administrador
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  *   put:
- *     summary: Update a user
- *     description: Update user information (admin only)
+ *     summary: Actualizar un usuario
+ *     description: Actualizar información del usuario (solo administrador)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -55,19 +55,19 @@ const prisma = new PrismaClient();
  *                 description: User role
  *     responses:
  *       200:
- *         description: User updated
+ *         description: Usuario actualizado
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Missing required fields
+ *         description: Faltan campos requeridos
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       403:
- *         description: Forbidden - Admin access required
+ *         description: Prohibido - Se requiere acceso de administrador
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  */
 export default async function handler(
   req: NextApiRequest,
@@ -87,13 +87,13 @@ export default async function handler(
     });
 
     if (!session) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ message: 'No autorizado' });
     }
 
-    if (session.user.role !== 'administrador') {
+    if (session.user.role !== 'admin') {
       return res
         .status(403)
-        .json({ message: 'Forbidden: Admin access required' });
+        .json({ message: 'Prohibido: Se requiere acceso de administrador' });
     }
 
     if (req.method === 'GET') {
@@ -115,7 +115,7 @@ export default async function handler(
       const { id, name, role } = req.body;
 
       if (!id || !name || !role) {
-        return res.status(400).json({ message: 'Missing required fields' });
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
       }
 
       const updatedUser = await prisma.user.update({
@@ -131,9 +131,9 @@ export default async function handler(
 
       res.status(200).json(updatedUser);
     } else {
-      res.status(405).json({ message: 'Method not allowed' });
+      res.status(405).json({ message: 'Método no permitido' });
     }
   } catch {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 }

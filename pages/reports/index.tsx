@@ -61,7 +61,7 @@ function Reports() {
     queryFn: async () => {
       const response = await fetch('/api/transactions');
       if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
+        throw new Error('Error al obtener transacciones');
       }
       return response.json() as Promise<Transaction[]>;
     },

@@ -33,6 +33,9 @@ export interface User {
 }
 
 function Users(): JSX.Element {
+  const translateRole = (role: string) => {
+    return role === 'admin' ? 'Administrador' : 'Usuario';
+  };
   const queryClient = useQueryClient();
 
   // Fetch users
@@ -41,7 +44,7 @@ function Users(): JSX.Element {
     queryFn: async () => {
       const response = await fetch('/api/users');
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error('Error al obtener usuarios');
       }
       return response.json() as Promise<User[]>;
     },
@@ -59,7 +62,7 @@ function Users(): JSX.Element {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update user');
+        throw new Error(errorData.message || 'Error al actualizar usuario');
       }
       return response.json();
     },
@@ -105,7 +108,7 @@ function Users(): JSX.Element {
 
   function openEditDialog(user: User) {
     setEditingUser(user);
-    reset({ name: user.name, role: user.role as 'administrador' | 'usuario' });
+    reset({ name: user.name, role: user.role as 'admin' | 'user' });
     setIsDialogOpen(true);
   }
 
@@ -158,7 +161,7 @@ function Users(): JSX.Element {
                       <TableRow key={user.id}>
                         <TableCell>{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{translateRole(user.role)}</TableCell>
                         <TableCell>
                           <Button
                             variant='outline'
@@ -203,8 +206,8 @@ function Users(): JSX.Element {
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
                   {...register('role')}
                 >
-                  <option value='admin'>Admin</option>
-                  <option value='user'>User</option>
+                  <option value='admin'>Administrador</option>
+                  <option value='user'>Usuario</option>
                 </select>
                 {errors.role && (
                   <p className='text-sm text-red-600 mt-1'>

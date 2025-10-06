@@ -8,13 +8,13 @@ const prisma = new PrismaClient();
  * @swagger
  * /api/transactions:
  *   get:
- *     summary: Get all transactions
- *     description: Retrieve a list of all transaction records
+ *     summary: Obtener todas las transacciones
+ *     description: Recuperar una lista de todos los registros de transacciones
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of transactions
+ *         description: Lista de transacciones
  *         content:
  *           application/json:
  *             schema:
@@ -22,12 +22,12 @@ const prisma = new PrismaClient();
  *               items:
  *                 $ref: '#/components/schemas/Transaction'
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  *   post:
- *     summary: Create a new transaction
- *     description: Create a new transaction record (admin only)
+ *     summary: Crear una nueva transacción
+ *     description: Crear un nuevo registro de transacción (solo administrador)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -53,19 +53,19 @@ const prisma = new PrismaClient();
  *                 description: Transaction date
  *     responses:
  *       201:
- *         description: Transaction created
+ *         description: Transacción creada
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Transaction'
  *       400:
- *         description: Missing required fields
+ *         description: Faltan campos requeridos
  *       403:
- *         description: Forbidden - Admin access required
+ *         description: Prohibido - Se requiere acceso de administrador
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  */
 export default async function handler(
   req: NextApiRequest,
@@ -85,7 +85,7 @@ export default async function handler(
     });
 
     if (!session) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ message: 'No autorizado' });
     }
 
     if (req.method === 'GET') {
@@ -93,10 +93,10 @@ export default async function handler(
     } else if (req.method === 'POST') {
       return handleCreateTransaction(req, res, session);
     } else {
-      return res.status(405).json({ message: 'Method not allowed' });
+      return res.status(405).json({ message: 'Método no permitido' });
     }
   } catch {
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
 
@@ -122,7 +122,7 @@ async function handleGetTransactions(
 
     res.status(200).json(transactions);
   } catch {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
 
@@ -133,17 +133,17 @@ async function handleCreateTransaction(
 ) {
   try {
     // Check if user has admin role
-    if (session.user.role !== 'administrador') {
+    if (session.user.role !== 'admin') {
       return res
         .status(403)
-        .json({ message: 'Forbidden: Admin access required' });
+        .json({ message: 'Prohibido: Se requiere acceso de administrador' });
     }
 
     const { concepto, monto, fecha } = req.body;
 
     // Validate required fields
     if (!concepto || monto === undefined || !fecha) {
-      return res.status(400).json({ message: 'Missing required fields' });
+      return res.status(400).json({ message: 'Faltan campos requeridos' });
     }
 
     // Create transaction
@@ -166,6 +166,6 @@ async function handleCreateTransaction(
 
     res.status(201).json(transaction);
   } catch {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 }

@@ -36,8 +36,8 @@
           "role": {
             "type": "string",
             "enum": [
-              "usuario",
-              "administrador"
+              "user",
+              "admin"
             ],
             "description": "User role"
           }
@@ -84,8 +84,8 @@
   "paths": {
     "/api/profile": {
       "get": {
-        "summary": "Get current user profile",
-        "description": "Retrieve the current user's profile information",
+        "summary": "Obtener perfil del usuario actual",
+        "description": "Recuperar la información del perfil del usuario actual",
         "security": [
           {
             "bearerAuth": []
@@ -93,7 +93,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User profile with statistics",
+            "description": "Perfil de usuario con estadísticas",
             "content": {
               "application/json": {
                 "schema": {
@@ -125,16 +125,16 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       },
       "put": {
-        "summary": "Update current user profile",
-        "description": "Update the current user's profile information",
+        "summary": "Actualizar perfil del usuario actual",
+        "description": "Actualizar la información del perfil del usuario actual",
         "security": [
           {
             "bearerAuth": []
@@ -167,7 +167,7 @@
         },
         "responses": {
           "200": {
-            "description": "Profile updated",
+            "description": "Perfil actualizado",
             "content": {
               "application/json": {
                 "schema": {
@@ -177,21 +177,21 @@
             }
           },
           "400": {
-            "description": "Missing required fields"
+            "description": "Faltan campos requeridos"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       }
     },
     "/api/transactions": {
       "get": {
-        "summary": "Get all transactions",
-        "description": "Retrieve a list of all transaction records",
+        "summary": "Obtener todas las transacciones",
+        "description": "Recuperar una lista de todos los registros de transacciones",
         "security": [
           {
             "bearerAuth": []
@@ -199,7 +199,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of transactions",
+            "description": "Lista de transacciones",
             "content": {
               "application/json": {
                 "schema": {
@@ -212,16 +212,16 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       },
       "post": {
-        "summary": "Create a new transaction",
-        "description": "Create a new transaction record (admin only)",
+        "summary": "Crear una nueva transacción",
+        "description": "Crear un nuevo registro de transacción (solo administrador)",
         "security": [
           {
             "bearerAuth": []
@@ -259,7 +259,7 @@
         },
         "responses": {
           "201": {
-            "description": "Transaction created",
+            "description": "Transacción creada",
             "content": {
               "application/json": {
                 "schema": {
@@ -269,24 +269,24 @@
             }
           },
           "400": {
-            "description": "Missing required fields"
+            "description": "Faltan campos requeridos"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "403": {
-            "description": "Forbidden - Admin access required"
+            "description": "Prohibido - Se requiere acceso de administrador"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       }
     },
     "/api/users": {
       "get": {
-        "summary": "Get all users",
-        "description": "Retrieve a list of all users (admin only)",
+        "summary": "Obtener todos los usuarios",
+        "description": "Recuperar una lista de todos los usuarios (solo administrador)",
         "security": [
           {
             "bearerAuth": []
@@ -294,7 +294,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of users",
+            "description": "Lista de usuarios",
             "content": {
               "application/json": {
                 "schema": {
@@ -307,19 +307,19 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "403": {
-            "description": "Forbidden - Admin access required"
+            "description": "Prohibido - Se requiere acceso de administrador"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       },
       "put": {
-        "summary": "Update a user",
-        "description": "Update user information (admin only)",
+        "summary": "Actualizar un usuario",
+        "description": "Actualizar información del usuario (solo administrador)",
         "security": [
           {
             "bearerAuth": []
@@ -360,7 +360,7 @@
         },
         "responses": {
           "200": {
-            "description": "User updated",
+            "description": "Usuario actualizado",
             "content": {
               "application/json": {
                 "schema": {
@@ -370,16 +370,16 @@
             }
           },
           "400": {
-            "description": "Missing required fields"
+            "description": "Faltan campos requeridos"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "No autorizado"
           },
           "403": {
-            "description": "Forbidden - Admin access required"
+            "description": "Prohibido - Se requiere acceso de administrador"
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Error interno del servidor"
           }
         }
       }

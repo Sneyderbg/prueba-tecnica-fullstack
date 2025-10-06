@@ -49,7 +49,7 @@ function Transactions(): JSX.Element {
     queryFn: async () => {
       const response = await fetch('/api/transactions');
       if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
+        throw new Error('Error al obtener transacciones');
       }
       return response.json() as Promise<Transaction[]>;
     },
@@ -67,7 +67,7 @@ function Transactions(): JSX.Element {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create transaction');
+        throw new Error(errorData.message || 'Error al crear transacción');
       }
       return response.json();
     },

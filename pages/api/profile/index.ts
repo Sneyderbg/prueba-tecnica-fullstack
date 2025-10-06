@@ -8,13 +8,13 @@ const prisma = new PrismaClient();
  * @swagger
  * /api/profile:
  *   get:
- *     summary: Get current user profile
- *     description: Retrieve the current user's profile information
+ *     summary: Obtener perfil del usuario actual
+ *     description: Recuperar la información del perfil del usuario actual
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile with statistics
+ *         description: Perfil de usuario con estadísticas
  *         content:
  *           application/json:
  *             schema:
@@ -32,12 +32,12 @@ const prisma = new PrismaClient();
  *                           type: number
  *                           description: Total amount of transactions
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  *   put:
- *     summary: Update current user profile
- *     description: Update the current user's profile information
+ *     summary: Actualizar perfil del usuario actual
+ *     description: Actualizar la información del perfil del usuario actual
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -59,17 +59,17 @@ const prisma = new PrismaClient();
  *                 description: User email
  *     responses:
  *       200:
- *         description: Profile updated
+ *         description: Perfil actualizado
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Missing required fields
+ *         description: Faltan campos requeridos
  *       401:
- *         description: Unauthorized
+ *         description: No autorizado
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
  */
 export default async function handler(
   req: NextApiRequest,
@@ -89,7 +89,7 @@ export default async function handler(
     });
 
     if (!session) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ message: 'No autorizado' });
     }
 
     if (req.method === 'GET') {
@@ -105,7 +105,7 @@ export default async function handler(
       });
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: 'Usuario no encontrado' });
       }
 
       // Get user's transactions for statistics
@@ -130,7 +130,7 @@ export default async function handler(
       const { name, email } = req.body;
 
       if (!name || !email) {
-        return res.status(400).json({ message: 'Missing required fields' });
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
       }
 
       // Update current user
@@ -147,10 +147,10 @@ export default async function handler(
 
       res.status(200).json(updatedUser);
     } else {
-      res.status(405).json({ message: 'Method not allowed' });
+      res.status(405).json({ message: 'Método no permitido' });
     }
   } catch (error) {
     console.error('Profile API error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
