@@ -133,7 +133,7 @@ async function handleCreateTransaction(
 ) {
   try {
     // Check if user has admin role
-    if (session.user.role !== 'admin') {
+    if (session.user.role !== 'administrador') {
       return res
         .status(403)
         .json({ message: 'Forbidden: Admin access required' });

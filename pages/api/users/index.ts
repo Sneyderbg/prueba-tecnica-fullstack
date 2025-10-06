@@ -90,7 +90,7 @@ export default async function handler(
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    if (session.user.role !== 'admin') {
+    if (session.user.role !== 'administrador') {
       return res
         .status(403)
         .json({ message: 'Forbidden: Admin access required' });

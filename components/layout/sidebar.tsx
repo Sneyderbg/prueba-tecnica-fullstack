@@ -7,16 +7,31 @@ import { authClient } from '@/lib/auth/client';
 import { DollarSign, Users, FileText, User, LogOut, Home } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home, roles: ['user', 'admin'] },
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: Home,
+    roles: ['usuario', 'administrador'],
+  },
   {
     name: 'Ingresos y Egresos',
     href: '/transactions',
     icon: DollarSign,
-    roles: ['user', 'admin'],
+    roles: ['usuario', 'administrador'],
   },
-  { name: 'Usuarios', href: '/users', icon: Users, roles: ['admin'] },
-  { name: 'Reportes', href: '/reports', icon: FileText, roles: ['admin'] },
-  { name: 'Perfil', href: '/profile', icon: User, roles: ['user', 'admin'] },
+  { name: 'Usuarios', href: '/users', icon: Users, roles: ['administrador'] },
+  {
+    name: 'Reportes',
+    href: '/reports',
+    icon: FileText,
+    roles: ['administrador'],
+  },
+  {
+    name: 'Perfil',
+    href: '/profile',
+    icon: User,
+    roles: ['usuario', 'administrador'],
+  },
 ];
 
 interface SidebarProps {

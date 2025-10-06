@@ -43,7 +43,7 @@ const modules = [
 
 function Home() {
   const { data: session } = authClient.useSession();
-  const isAdmin = (session?.user as any)?.role === 'admin';
+  const isAdmin = (session?.user as any)?.role === 'administrador';
 
   const visibleModules = modules.filter(
     (module) => !module.adminOnly || isAdmin

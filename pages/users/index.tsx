@@ -105,7 +105,7 @@ function Users(): JSX.Element {
 
   function openEditDialog(user: User) {
     setEditingUser(user);
-    reset({ name: user.name, role: user.role as 'admin' | 'user' });
+    reset({ name: user.name, role: user.role as 'administrador' | 'usuario' });
     setIsDialogOpen(true);
   }
 

@@ -90,8 +90,19 @@ function Profile() {
     }
   }
 
+  function validateEmail(email: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   function handleSave() {
     setErrorMessage(null);
+
+    if (!validateEmail(email)) {
+      setErrorMessage('Por favor, ingresa un correo electrónico válido');
+      return;
+    }
+
     updateProfileMutation.mutate(
       { name, email },
       {
