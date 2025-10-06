@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "generate-swagger": "next-swagger-doc-cli swagger.config.json --output lib/swagger-spec.json"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
